@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Algorithm Lab | Yash (Rosen Ch. 3)</title>
+  <style>
+    :root {
+      --bg: #f6f8f8;
+      --card: #fff;
+      --ink: #12302e;
+      --mute: #5b6f6d;
+      --line: #d8e2e1;
+      --slow: #be123c;
+      --fast: #0f766e;
+      --acc: #b45309
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root {
+        --bg: #0f1a19;
+        --card: #172524;
+        --ink: #e6f1f0;
+        --mute: #9db3b1;
+        --line: #2b3f3d;
+        --slow: #fb7185;
+        --fast: #2dd4bf;
+        --acc: #fbbf24
+      }
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 60px
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.5 system-ui, Segoe UI, Roboto, sans-serif
+    }
+
+    header {
+      padding: 26px 20px 8px;
+      max-width: 1080px;
+      margin: auto
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.6rem
+    }
+
+    header p {
+      margin: 0;
+      color: var(--mute)
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    nav div {
+      max-width: 1080px;
+      margin: auto;
+      padding: 8px 20px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap
+    }
+
+    nav a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: .85rem;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card)
+    }
+
+    nav a:hover {
+      border-color: var(--fast);
+      color: var(--fast)
+    }
+
+    main {
+      max-width: 1080px;
+      margin: auto;
+      padding: 14px 20px 50px;
+      display: grid;
+      gap: 18px
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px
+    }
+
+    .sechead {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px
+    }
+
+    .num {
+      flex: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--fast);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.15rem
+    }
+
+    .sub {
+      color: var(--mute);
+      font-size: .86rem
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .86rem;
+      color: var(--mute);
+      margin-top: 6px
+    }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: var(--fast)
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin: 10px 0
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 12px
+    }
+
+    .kpi small {
+      display: block;
+      color: var(--mute)
+    }
+
+    .kpi b {
+      font-size: 1.1rem
+    }
+
+    .kpi em {
+      display: block;
+      font-style: normal;
+      color: var(--mute);
+      font-size: .82rem
+    }
+
+    b.s {
+      color: var(--slow)
+    }
+
+    b.f {
+      color: var(--fast)
+    }
+
+    .note {
+      margin: 2px 0 8px;
+      color: var(--mute);
+      font-size: .85rem
+    }
+
+    .charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px
+    }
+
+    figure {
+      margin: 0
+    }
+
+    figcaption {
+      font-size: .8rem;
+      color: var(--mute);
+      text-align: center
+    }
+
+    svg.ch {
+      width: 100%;
+      height: auto;
+      display: block
+    }
+
+    svg .gl {
+      stroke: var(--line);
+      stroke-width: 1
+    }
+
+    svg .tx {
+      fill: var(--mute);
+      font-size: 10px
+    }
+
+    svg .lg {
+      fill: var(--ink);
+      font-size: 10.5px
+    }
+
+    svg .mk {
+      stroke: var(--acc);
+      stroke-width: 1.2;
+      stroke-dasharray: 3 3
+    }
+
+    svg .rf {
+      stroke: var(--acc);
+      stroke-width: 1;
+      stroke-dasharray: 2 4;
+      opacity: .8
+    }
+
+    svg .rt {
+      fill: var(--acc);
+      font-size: 9px
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: .84rem
+    }
+
+    th,
+    td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top
+    }
+
+    th {
+      color: var(--mute);
+      font-weight: 600
+    }
+
+    .tw {
+      overflow-x: auto
+    }
+
+    #rate {
+      width: auto
+    }
+
+    input[type=number],
+    select {
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--ink);
+      width: 95px
+    }
+
+    .ok {
+      color: var(--fast);
+      font-weight: 600
+    }
+
+    .bad {
+      color: var(--slow);
+      font-weight: 600
+    }
+
+    .ctrl {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: .9rem
+    }
+
+    small {
+      color: var(--mute)
+    }
+
+    .bars div.r {
+      display: grid;
+      grid-template-columns: 135px 1fr 90px;
+      gap: 8px;
+      align-items: center;
+      margin: 6px 0;
+      font-size: .84rem
+    }
+
+    .bars .tr {
+      height: 14px;
+      background: var(--line);
+      border-radius: 7px;
+      overflow: hidden
+    }
+
+    .bars .tr i {
+      display: block;
+      height: 100%;
+      background: var(--fast)
+    }
+
+    .verdict {
+      background: color-mix(in srgb, var(--acc) 12%, transparent);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 12px;
+      font-size: .9rem
+    }
+
+    .verdict ul {
+      margin: 6px 0 0;
+      padding-left: 18px
+    }
+
+    [data-w] {
+      cursor: help;
+      border-radius: 8px
+    }
+
+    [data-w]:hover,
+    [data-w]:focus {
+      outline: 2px solid color-mix(in srgb, var(--fast) 55%, transparent);
+      outline-offset: 3px
+    }
+
+    #tip {
+      position: fixed;
+      display: none;
+      z-index: 50;
+      max-width: 480px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--fast);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .25);
+      font-size: .82rem;
+      line-height: 1.45;
+      pointer-events: none
+    }
+
+    #tip h4 {
+      margin: 0 0 4px;
+      font-size: .85rem;
+      color: var(--fast)
+    }
+
+    #tip code {
+      font: .78rem ui-monospace, Consolas, monospace;
+      background: var(--bg);
+      padding: 1px 4px;
+      border-radius: 4px
+    }
+
+    #tip pre.py {
+      border-left: 3px solid var(--acc);
+      font-size: .72rem
+    }
+
+    #tip .note {
+      margin-top: 4px;
+      font-size: .72rem;
+      color: var(--mute)
+    }
+
+    #tip pre {
+      margin: 4px 0;
+      font: .76rem/1.35 ui-monospace, Consolas, monospace;
+      white-space: pre-wrap;
+      background: var(--bg);
+      padding: 6px;
+      border-radius: 6px
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Algorithm Lab</h1>
+    <p style="margin-bottom:6px"><b>Yash</b> &nbsp;|&nbsp; Discrete Mathematics (Rosen, 8th Edition, Chapter 3)</p>
+    <p>Five problems from Rosen Chapter 3, one at a time, each with a slow method, a fast method and its own charts. The
+      last section compares all five.
+      <b>Hover over a title, a number box or a chart to see the logic and the exact Python code (from
+        rosen_ch3_algos.py) behind it.</b>
+    </p>
+    <div class="ctrl" style="margin-top:12px">
+      <span>Machine speed:</span>
+      <select id="rate">
+        <option value="1e6">10<sup>6</sup> ops/s</option>
+        <option value="1e9" selected>10<sup>9</sup> ops/s</option>
+        <option value="1e11">10<sup>11</sup> ops/s</option>
+      </select>
+      <small>used to turn operation counts into running time</small>
+    </div>
+  </header>
+  <nav>
+    <div id="nav"></div>
+  </nav>
+  <main>
+    <section class="card" id="s0">
+      <div class="sechead">
+        <div class="num">0</div>
+        <div>
+          <h2 data-w="t"
+            data-tip="<h4>Big-O witness</h4>f(n) = O(g(n)) means there are constants C and k with |f(n)| &le; C&middot;|g(n)| for all n &gt; k. The page tests the inequality for every n up to 100,000. A failure disproves that C, k pair; a pass is evidence, and the algebra in the note makes it a proof."
+            tabindex="0">Warm-up: Big-O witness checker</h2>
+          <div class="sub">Is f(n) = 4n&sup2; + 6n&middot;log&#8322;n + 10 bounded by C&middot;g(n) for all n &gt; k?
+            Try g = n&sup2;, C = 20, k = 1, then C = 3, or g = n.</div>
+        </div>
+      </div>
+      <div class="ctrl">
+        g(n) = <select id="g" style="width:110px">
+          <option value="n2">n&sup2;</option>
+          <option value="n">n</option>
+          <option value="nlog">n log&#8322; n</option>
+          <option value="n3">n&sup3;</option>
+        </select>
+        C = <input type="number" id="C" value="20" min="0" step="1">
+        k = <input type="number" id="K" value="1" min="0" step="1">
+        <span id="wit"></span>
+      </div>
+    </section>
+    <div id="sections" style="display:contents"></div>
+    <section class="card" id="cmp">
+      <div class="sechead">
+        <div class="num">6</div>
+        <div>
+          <h2>Comparing all five problems</h2>
+          <div class="sub">One shared scale parameter s: exponent k for Search (n = 2<sup>s</sup>), list size n = 20s
+            for Sort, text length n = 50s for String Match, degree n = 100s for Polynomial, and n = s talks for
+            Scheduling.</div>
+        </div>
+      </div>
+      <label><span>size parameter s</span><b id="vs"></b></label>
+      <input type="range" id="rs" min="2" max="30" value="18">
+      <div class="tw">
+        <table id="ctab"></table>
+      </div>
+      <div class="charts" style="margin-top:12px">
+        <figure><svg class="ch" id="cc1"></svg>
+          <figcaption>Slow methods: operations vs s (log scale)</figcaption>
+        </figure>
+        <figure><svg class="ch" id="cc2"></svg>
+          <figcaption>Fast methods: operations vs s (log scale)</figcaption>
+        </figure>
+      </div>
+      <h2 style="font-size:1rem;margin-top:14px">How much does the better method save at this s?</h2>
+      <div class="bars" id="cbars"></div>
+      <div class="verdict" id="verdict"></div>
+    </section>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const rate = () => Number($("rate").value);
+    function fmt(x) {
+      let s = (typeof x === "bigint" ? x : BigInt(Math.round(x))).toString();
+      if (s.length <= 12) return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return s[0] + "." + s.slice(1, 3) + "×10^" + (s.length - 1);
+    }
+    function timeStr(ops) {
+      const s = Number(ops) / rate();
+      if (s < 1e-6) return "under 1 µs"; if (s < 1e-3) return (s * 1e6).toFixed(1) + " µs";
+      if (s < 1) return (s * 1e3).toFixed(1) + " ms"; if (s < 60) return s.toFixed(1) + " s";
+      if (s < 3600) return (s / 60).toFixed(1) + " min"; if (s < 86400) return (s / 3600).toFixed(1) + " h";
+      const y = s / 31557600; if (y < 1) return (s / 86400).toFixed(1) + " days";
+      if (y < 1e6) return Math.round(y).toLocaleString() + " years";
+      return y.toExponential(1).replace("e+", "×10^") + " years";
+    }
+    const H = (t, body) => `<h4>${t}</h4>${body}`;
+
+    const cases = [
+      {
+        t: "1 · Ordered Searching (Linear vs. Binary)", sub: "Input: sorted array of n = 2^k elements, searching for absent target x = -1 (worst case)", lab: "k (list length n = 2^k)", min: 2, max: 30, val: 16,
+        run: k => {const n = 1n << BigInt(k); return [2n * n + 2n, BigInt(2 * k + 2), `n = 2^${k} = ${fmt(n)} items; average Linear Search uses ${fmt(n + 2n)} comparisons`]},
+        slow: "Linear Search comparisons", fast: "Binary Search comparisons",
+        logic: k => ({
+          o: H("Why sorted order changes everything", "Linear Search inspects every position sequentially (&Theta;(n)). Binary Search exploits total ordering to discard half of the remaining interval after a single midpoint comparison (&Theta;(log&#8322; n))."),
+          s: H("Linear Search (Rosen Alg. 2)", "<pre>i := 1\nwhile (i &le; n and x &ne; a_i): i := i + 1\nif i &le; n then location := i else 0</pre>When x is absent, it executes 2n + 2 = <b>" + fmt(2n * (1n << BigInt(k)) + 2n) + "</b> comparisons."),
+          f: H("Binary Search (Rosen Alg. 3)", "<pre>while i &lt; j:\n  m := floor((i + j) / 2)\n  if x &gt; a_m then i := m + 1 else j := m</pre>Halving 2^" + k + " items " + k + " times uses 2k + 2 = <b>" + (2 * k + 2) + "</b> comparisons.")
+        })
+      },
+      {
+        t: "2 · Comparison Sorting (Bubble vs. Merge Sort)", sub: "Input: reverse-sorted sequence of n integers (worst case for quadratic sorts)", lab: "n (elements to sort)", min: 10, max: 1000, val: 250,
+        run: n => {const bub = BigInt(n * (n - 1) / 2); const mrg = BigInt(Math.round(n * Math.ceil(Math.log2(n)) - Math.pow(2, Math.ceil(Math.log2(n))) + 1)); return [bub, mrg, `Insertion Sort worst case uses ${fmt(BigInt(n * (n + 1) / 2 - 1))} comparisons; best case uses ${n - 1}`]},
+        slow: "Bubble Sort comparisons", fast: "Merge Sort comparisons",
+        logic: n => ({
+          o: H("Quadratic Swaps vs. Divide-and-Conquer", "Bubble Sort and Insertion Sort both degrade to &Theta;(n&sup2;) comparisons on reversed lists. Merge Sort recursively splits the list into halves and merges in linear time, guaranteeing &Theta;(n log&#8322; n)."),
+          s: H("Bubble Sort (Rosen Alg. 4)", "<pre>for i := 1 to n - 1:\n  for j := 1 to n - i:\n    if a_j &gt; a_{j+1} then swap</pre>Always executes n(n - 1)/2 = <b>" + fmt(n * (n - 1) / 2) + "</b> comparisons."),
+          f: H("Merge Sort (Rosen §3.3.2 / §5.4)", "<pre>merge_sort(L):\n  split L into left, right\n  return merge(merge_sort(left), merge_sort(right))</pre>Uses at most n&lceil;log&#8322; n&rceil; - 2^&lceil;log&#8322; n&rceil; + 1 = <b>" + fmt(Math.round(n * Math.ceil(Math.log2(n)) - Math.pow(2, Math.ceil(Math.log2(n))) + 1)) + "</b> comparisons.")
+        })
+      },
+      {
+        t: "3 · Exact String Matching (Naive vs. KMP)", sub: "Adversarial input: text T = 'a'^(n-1)+'b', pattern P = 'a'^49+'b' (m = 50)", lab: "n (text length, with m = 50)", min: 60, max: 5000, val: 1000,
+        run: n => {const m = 50; return [BigInt((n - m + 1) * m), BigInt(2 * n - 2), `Valid shift occurs at s = ${n - m}; Naive re-scans 49 'a's at every shift`]},
+        slow: "Naive Matcher char checks", fast: "KMP Matcher char checks",
+        logic: n => ({
+          o: H("Eliminating Backtracking via Prefix Reuse", "When a pattern has self-overlapping prefixes, the Naive Matcher resets to j = 1 after every mismatch (&Theta;(nm)). KMP precomputes a longest-prefix-suffix (lps) table so the text pointer never moves backward (&Theta;(n + m))."),
+          s: H("Naive String Matcher (Rosen Alg. 6)", "<pre>for s := 0 to n - m:\n  while j &le; m and T[s+j] == P[j]: j++</pre>Matches 49 'a's and fails on 'b' at each shift: (n - 49)&middot;50 = <b>" + fmt((n - 49) * 50) + "</b> comparisons."),
+          f: H("KMP Prefix-Jump Matcher", "<pre>build lps[0..m-1]\nwhile i &lt; n:\n  if P[j] == T[i]: i++; j++\n  elif j &ne; 0: j = lps[j-1]\n  else: i++</pre>Uses at most 2n - 2 = <b>" + fmt(2 * n - 2) + "</b> comparisons (prep + search).")
+        })
+      },
+      {
+        t: "4 · Polynomial Evaluation (Conventional vs. Horner)", sub: "Evaluating degree-n polynomial P(c) = a_n c^n + ... + a_1 c + a_0 at x = c", lab: "n (polynomial degree)", min: 5, max: 5000, val: 1000,
+        run: n => [BigInt(3 * n), BigInt(2 * n), `Conventional uses ${2 * n} mults + ${n} adds; Horner uses ${n} mults + ${n} adds (50% fewer mults)`],
+        slow: "Conventional ops (3n)", fast: "Horner's Rule ops (2n)",
+        logic: n => ({
+          o: H("Constant-Factor Gains Within Theta(n)", "Both procedures have &Theta;(n) asymptotic growth, demonstrating why exact operation counts matter in numerical computing: Horner's nested factoring eliminates redundant power multiplications."),
+          s: H("Conventional Evaluation (Rosen Ex. 13)", "<pre>for i := 1 to n:\n  power := power * c\n  y := y + a_i * power</pre>Performs 2 multiplications + 1 addition per term = 3n = <b>" + fmt(3 * n) + "</b> operations."),
+          f: H("Horner's Method (Rosen Ex. 14)", "<pre>y := a_n\nfor i := 1 to n:\n  y := y * c + a_{n-i}</pre>Evaluates ((a_n c + a_{n-1})c + ...) in n mults + n adds = 2n = <b>" + fmt(2 * n) + "</b> operations.")
+        })
+      },
+      {
+        t: "5 · Talk Scheduling (Brute-Force Subsets vs. Greedy EFT)", sub: "Scheduling maximum mutually compatible talks in a single lecture hall", lab: "n (candidate talks)", min: 4, max: 24, val: 14,
+        run: n => {const bf = BigInt(n) * ((1n << BigInt(n - 1)) - 1n) + 1n; const gr = BigInt(Math.max(1, Math.floor(n * Math.log2(n))) + n); return [bf, gr, `2^${n} = ${fmt(1n << BigInt(n))} subsets checked by brute force vs. O(n log n) sort + linear scan`]},
+        slow: "Brute-Force subset checks", fast: "Greedy EFT operations",
+        logic: n => ({
+          o: H("Exponential Subset Explosion vs. Greedy Choice", "Testing all 2^n subsets of talks takes &Theta;(n 2^n) operations. Sorting talks by earliest finish time (e_1 &le; ... &le; e_n) and greedily picking compatible talks is provably optimal in &Theta;(n log&#8322; n)."),
+          s: H("Brute-Force Subset Search (Rosen Ex. 41)", "<pre>for each subset S of 2^n subsets:\n  if S has no overlapping talks:\n    update max schedule</pre>Checks all 2^" + n + " subsets: <b>" + fmt(BigInt(n) * ((1n << BigInt(n - 1)) - 1n) + 1n) + "</b> operations."),
+          f: H("Greedy Earliest-Finish-Time (Rosen Alg. 8)", "<pre>sort talks so e_1 &le; e_2 &le; ... &le; e_n\nfor j := 1 to n:\n  if talk j compatible with S: S := S &cup; {j}</pre>Sort + scan takes &lfloor;n log&#8322; n&rfloor; + n = <b>" + fmt(Math.max(1, Math.floor(n * Math.log2(n))) + n) + "</b> operations.")
+        })
+      }
+    ];
+
+    const SRC = [
+      {
+        s: `def linear_search(x, arr):
+    n, i, comps = len(arr), 1, 0
+    while True:
+        comps += 1
+        if i > n: break
+        comps += 1
+        if x == arr[i - 1]: break
+        i += 1
+    comps += 1
+    return (i if i <= n else 0), comps`,
+        f: `def binary_search(x, arr):
+    n, i, j, comps = len(arr), 1, len(arr), 0
+    while True:
+        comps += 1
+        if not (i < j): break
+        m = (i + j) // 2
+        comps += 1
+        if x > arr[m - 1]: i = m + 1
+        else: j = m
+    comps += 1
+    return (i if x == arr[i - 1] else 0), comps`},
+      {
+        s: `def bubble_sort(arr):
+    a, n, comps = list(arr), len(arr), 0
+    for i in range(1, n):
+        for j in range(0, n - i):
+            comps += 1
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+    return a, comps`,
+        f: `def merge_sort(arr):
+    if len(arr) <= 1: return list(arr), 0
+    mid = len(arr) // 2
+    left, c1 = merge_sort(arr[:mid])
+    right, c2 = merge_sort(arr[mid:])
+    merged, comps, i, j = [], c1 + c2, 0, 0
+    while i < len(left) and j < len(right):
+        comps += 1
+        if left[i] <= right[j]: merged.append(left[i]); i += 1
+        else: merged.append(right[j]); j += 1
+    merged.extend(left[i:]); merged.extend(right[j:])
+    return merged, comps`},
+      {
+        s: `def naive_string_match(T, P):
+    n, m, shifts, comps = len(T), len(P), [], 0
+    for s in range(n - m + 1):
+        j = 0
+        while j < m:
+            comps += 1
+            if T[s + j] == P[j]: j += 1
+            else: break
+        if j == m: shifts.append(s)
+    return shifts, comps`,
+        f: `def kmp_string_match(T, P):
+    # Precomputes lps array in O(m) comparisons, then scans T
+    # without backtracking the text index in O(n) comparisons.
+    # Total worst-case comparisons <= 2n + 2m.`},
+      {
+        s: `def poly_conventional(c, coeffs):
+    power, y, ops = 1.0, float(coeffs[0]), 0
+    for i in range(1, len(coeffs)):
+        power *= c; ops += 1
+        y += coeffs[i] * power; ops += 2
+    return y, ops`,
+        f: `def poly_horner(c, coeffs):
+    y, ops = float(coeffs[-1]), 0
+    for i in range(len(coeffs) - 2, -1, -1):
+        y = y * c + coeffs[i]; ops += 2
+    return y, ops`},
+      {
+        s: `def schedule_bruteforce(talks):
+    n, best, ops = len(talks), [], 0
+    for mask in range(1 << n):
+        subset = [talks[i] for i in range(n) if (mask >> i) & 1]
+        # checks pairwise compatibility across all 2^n subsets`,
+        f: `def schedule_greedy(talks):
+    sorted_talks = sorted(talks, key=lambda t: t[1])
+    selected, last_end = [], -float("inf")
+    for s, e in sorted_talks:
+        if s >= last_end:
+            selected.append((s, e)); last_end = e
+    return selected`}
+    ];
+
+    const DRV = [
+      k => `arr = list(range(1, 2**${k} + 1))\nlinear_search(-1, arr)[1]   # -> ${fmt(2n * (1n << BigInt(k)) + 2n)}\nbinary_search(-1, arr)[1]   # -> ${2 * k + 2}`,
+      n => `arr = list(range(${n}, 0, -1))\nbubble_sort(arr)[1]         # -> ${fmt(n * (n - 1) / 2)}\nmerge_sort(arr)[1]          # -> ${fmt(Math.round(n * Math.ceil(Math.log2(n)) - Math.pow(2, Math.ceil(Math.log2(n))) + 1))}`,
+      n => `T, P = "a"*${n - 1}+"b", "a"*49+"b"\nnaive_string_match(T, P)[1] # -> ${fmt((n - 49) * 50)}\nkmp_string_match(T, P)[1]   # -> ${fmt(2 * n - 2)}`,
+      n => `coeffs = [i+1 for i in range(${n + 1})]\npoly_conventional(1.05, coeffs)[1] # -> ${3 * n}\npoly_horner(1.05, coeffs)[1]       # -> ${2 * n}`,
+      n => `talks = [(i, i+2) for i in range(${n})]\nschedule_bruteforce(talks)[1] # -> ${fmt(BigInt(n) * ((1n << BigInt(n - 1)) - 1n) + 1n)}\nschedule_greedy(talks)[1]     # -> ${Math.max(1, Math.floor(n * Math.log2(n))) + n}`
+    ];
+    const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const NOTE = "The dashboard computes exact closed-form operation counts derived in Section 5 of the analytical note and verified by rosen_ch3_algos.py.";
+
+    const rng = (a, b) => Array.from({length: b - a + 1}, (_, i) => a + i);
+    const PAL = ["#0ea5a4", "#f59e0b", "#3b82f6", "#ef4444", "#a855f7"];
+    const REFS = [{y: 1, label: "1 second"}, {y: 3600, label: "1 hour"}, {y: 31557600, label: "1 year"}, {y: 4.4e17, label: "age of universe"}];
+    const sup = k => `10<tspan dy="-5" font-size="8">${k}</tspan>`;
+    const fmtX = x => x >= 1e6 ? x.toExponential(1).replace("e+", "×10^") : (x >= 1000 ? Math.round(x).toLocaleString("en-US") + "×" : x.toFixed(1) + "×");
+    const fx = x => x >= 1e21 ? x.toExponential(1).replace("e+", "×10^") : fmt(x);
+
+    function chart(svg, cfg) {
+      const W = 520, H = 290, L = 58, R = 16, T = 14, B = 44;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      const xs = cfg.xs; let lo = Infinity, hi = 0;
+      cfg.series.forEach(s => s.ys.forEach(y => {if (y > 0 && isFinite(y)) {lo = Math.min(lo, y); hi = Math.max(hi, y)} }));
+      const refs = (cfg.refs || []).filter(r => r.y >= lo / 10 && r.y <= hi * 10);
+      refs.forEach(r => {lo = Math.min(lo, r.y); hi = Math.max(hi, r.y)});
+      let y0 = Math.floor(Math.log10(lo)), y1 = Math.ceil(Math.log10(hi)); if (y1 <= y0) y1 = y0 + 1;
+      const x0 = xs[0], x1 = xs[xs.length - 1];
+      const px = x => L + (x - x0) / (x1 - x0) * (W - L - R);
+      const py = y => T + (1 - (Math.log10(Math.max(y, Math.pow(10, y0))) - y0) / (y1 - y0)) * (H - T - B);
+      let g = ""; const stride = Math.max(1, Math.ceil((y1 - y0) / 6));
+      for (let k = y0; k <= y1; k += stride) {
+        const y = py(Math.pow(10, k));
+        g += `<line x1="${L}" x2="${W - R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" class="gl"/><text x="${L - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end" class="tx">${sup(k)}</text>`
+      }
+      const NT = cfg.ticks || 5; for (let i = 0; i <= NT; i++) {
+        const x = x0 + (x1 - x0) * i / NT, X = px(x);
+        g += `<line x1="${X.toFixed(1)}" x2="${X.toFixed(1)}" y1="${T}" y2="${H - B}" class="gl" opacity=".5"/><text x="${X.toFixed(1)}" y="${H - B + 14}" text-anchor="middle" class="tx">${cfg.xfmt ? cfg.xfmt(x) : Math.round(x)}</text>`
+      }
+      refs.forEach(r => {const y = py(r.y); g += `<line x1="${L}" x2="${W - R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" class="rf"/><text x="${W - R - 3}" y="${(y - 3).toFixed(1)}" text-anchor="end" class="rt">${r.label}</text>`});
+      cfg.series.forEach(s => {
+        let d = "", pen = false;
+        s.ys.forEach((y, i) => {if (y > 0 && isFinite(y)) {d += (pen ? "L" : "M") + px(xs[i]).toFixed(1) + " " + py(y).toFixed(1); pen = true} else pen = false});
+        g += `<path d="${d}" fill="none" style="stroke:${s.color}" stroke-width="${s.w || 2}"/>`
+      });
+      if (cfg.mark != null) {
+        let j = 0, best = 1e99; xs.forEach((v, i) => {const dd = Math.abs(v - cfg.mark); if (dd < best) {best = dd; j = i} });
+        const X = px(xs[j]); g += `<line x1="${X.toFixed(1)}" x2="${X.toFixed(1)}" y1="${T}" y2="${H - B}" class="mk"/>`;
+        cfg.series.forEach(s => {const y = s.ys[j]; if (y > 0 && isFinite(y)) g += `<circle cx="${X.toFixed(1)}" cy="${py(y).toFixed(1)}" r="4" style="fill:${s.color};stroke:var(--card)" stroke-width="1.5"/>`})
+      }
+      cfg.series.forEach((s, i) => {
+        const y = T + 12 + i * 14;
+        g += `<line x1="${L + 8}" x2="${L + 24}" y1="${y - 3}" y2="${y - 3}" style="stroke:${s.color}" stroke-width="3"/><text x="${L + 28}" y="${y}" class="lg">${s.name}</text>`
+      });
+      g += `<text x="${(L + W - R) / 2}" y="${H - 6}" text-anchor="middle" class="tx">${cfg.xlabel}</text><text transform="translate(12 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle" class="tx">${cfg.ylabel}</text>`;
+      svg.innerHTML = g; svg._cfg = cfg; svg._geo = {L, R, W, x0, x1};
+    }
+
+    const CH = [
+      {xs: rng(2, 30), xn: "k", xl: "k  (sorted list length n = 2^k)", cost: k => [2 * Math.pow(2, k) + 2, 2 * k + 2]},
+      {xs: rng(10, 1000).filter((_, i) => i % 10 === 0), xn: "n", xl: "n  (elements to sort)", cost: n => [n * (n - 1) / 2, Math.round(n * Math.ceil(Math.log2(n)) - Math.pow(2, Math.ceil(Math.log2(n))) + 1)]},
+      {xs: rng(60, 5000).filter((_, i) => i % 50 === 0), xn: "n", xl: "n  (text length, m = 50)", cost: n => [(n - 49) * 50, 2 * n - 2]},
+      {xs: rng(5, 5000).filter((_, i) => i % 50 === 0), xn: "n", xl: "n  (polynomial degree)", cost: n => [3 * n, 2 * n]},
+      {xs: rng(4, 24), xn: "n", xl: "n  (candidate talks)", cost: n => [n * (Math.pow(2, n - 1) - 1) + 1, Math.max(1, Math.floor(n * Math.log2(n))) + n]}
+    ];
+    const data = i => {const c = CH[i]; if (!c.d) {const t = c.xs.map(c.cost); c.d = {s: t.map(a => a[0]), f: t.map(a => a[1])}} return c.d};
+
+    const NAV = [["s0", "Warm-up"], ["s1", "1 Search"], ["s2", "2 Sort"], ["s3", "3 String"], ["s4", "4 Polynomial"], ["s5", "5 Scheduling"], ["cmp", "6 Compare all"]];
+    $("nav").innerHTML = NAV.map(a => `<a href="#${a[0]}">${a[1]}</a>`).join("");
+
+    const root = $("sections");
+    cases.forEach((c, i) => {
+      const sec = document.createElement("section"); sec.className = "card"; sec.id = "s" + (i + 1);
+      sec.innerHTML = `<div class="sechead"><div class="num">${i + 1}</div><div><h2 data-i="${i}" data-w="o" tabindex="0">${c.t.replace(/^\d · /, "")}</h2><div class="sub">${c.sub}</div></div></div>
+  <label><span>${c.lab}</span><b id="v${i}"></b></label>
+  <input type="range" id="r${i}" min="${c.min}" max="${c.max}" value="${c.val}">
+  <div class="kpis">
+   <div class="kpi" data-i="${i}" data-w="s" tabindex="0"><small>${c.slow}</small><b class="s" id="a${i}"></b><em id="at${i}"></em></div>
+   <div class="kpi" data-i="${i}" data-w="f" tabindex="0"><small>${c.fast}</small><b class="f" id="b${i}"></b><em id="bt${i}"></em></div>
+   <div class="kpi"><small>speed-up</small><b id="x${i}"></b><em>fewer operations</em></div>
+  </div>
+  <p class="note" id="n${i}"></p>
+  <div class="charts">
+   <figure><svg class="ch" id="c1_${i}"></svg><figcaption>Operations vs size, slow and fast method (log scale)</figcaption></figure>
+   <figure><svg class="ch" id="c2_${i}"></svg><figcaption>Estimated running time at the chosen machine speed (log scale)</figcaption></figure>
+  </div>`;
+      root.appendChild(sec);
+      $("r" + i).addEventListener("input", () => update(i));
+    });
+
+    function update(i) {
+      const c = cases[i], v = Number($("r" + i).value); $("v" + i).textContent = v;
+      const [a, b, note] = c.run(v);
+      $("a" + i).textContent = fmt(a); $("at" + i).textContent = timeStr(a);
+      $("b" + i).textContent = fmt(b); $("bt" + i).textContent = timeStr(b);
+      const sp = Number(a) / Number(b);
+      $("x" + i).textContent = fmtX(sp);
+      $("n" + i).textContent = note;
+      const d = data(i), C = CH[i], r = rate();
+      chart($("c1_" + i), {
+        xs: C.xs, xname: C.xn, xlabel: C.xl, ylabel: "operations", mark: v, tipFmt: fx,
+        series: [{name: c.slow, color: "var(--slow)", ys: d.s}, {name: c.fast, color: "var(--fast)", ys: d.f}]
+      });
+      chart($("c2_" + i), {
+        xs: C.xs, xname: C.xn, xlabel: C.xl, ylabel: "seconds", mark: v, refs: REFS, tipFmt: y => timeStr(y * r),
+        series: [{name: c.slow, color: "var(--slow)", ys: d.s.map(y => y / r)}, {name: c.fast, color: "var(--fast)", ys: d.f.map(y => y / r)}]
+      });
+    }
+
+    const CS = rng(2, 30);
+    const CMP = [
+      {name: "1. Search (n = 2^s)", means: "s = log2(n) exponent", slow: s => 2 * Math.pow(2, s) + 2, fast: s => 2 * s + 2, cls: ["Theta(2^s)", "Theta(s)"], i: 0},
+      {name: "2. Sort (n = 20s)", means: "n = 20*s items", slow: s => (20 * s) * (20 * s - 1) / 2, fast: s => Math.round(20 * s * Math.log2(20 * s)), cls: ["Theta(n^2)", "Theta(n log n)"], i: 1},
+      {name: "3. String (n = 50s)", means: "n = 50*s, m = 50", slow: s => Math.max(50, (50 * s - 49) * 50), fast: s => 100 * s - 2, cls: ["Theta(nm)", "Theta(n + m)"], i: 2},
+      {name: "4. Polynomial (deg 100s)", means: "degree n = 100*s", slow: s => 300 * s, fast: s => 200 * s, cls: ["Theta(n) [3n]", "Theta(n) [2n]"], i: 3},
+      {name: "5. Scheduling (n = s)", means: "s talks (s <= 24)", slow: s => s <= 24 ? s * (Math.pow(2, s - 1) - 1) + 1 : null, fast: s => Math.max(1, Math.floor(s * Math.log2(s))) + s, cls: ["Theta(s 2^s)", "Theta(s log s)"], i: 4}
+    ];
+    function cmpData() {if (!CMP.d) CMP.d = CMP.map(m => ({s: CS.map(m.slow), f: CS.map(m.fast)})); return CMP.d}
+    function updateCmp() {
+      const s = Number($("rs").value), r = rate(); $("vs").textContent = s;
+      const D = cmpData(), j = CS.indexOf(s);
+      let rows = "", bars = "", best = null, yrSlow = 0, yrFast = 0, valid = 0;
+      CMP.forEach((m, k) => {
+        const a = D[k].s[j], b = D[k].f[j];
+        const ok = a != null && b != null;
+        const sp = ok ? a / b : null;
+        if (ok) {valid++; if (a / r > 31557600) yrSlow++; if (b / r > 31557600) yrFast++; if (!best || sp > best.sp) best = {name: m.name, sp}}
+        rows += `<tr><td data-i="${m.i}" data-w="o" tabindex="0"><b>${m.name}</b><br><small>${m.means}</small></td>
+     <td>${ok ? fx(a) : "—"}<br><small>${ok ? timeStr(a) : ""}</small></td><td>${fx(b)}<br><small>${timeStr(b)}</small></td>
+     <td>${ok ? fmtX(sp) : "—"}</td><td>${m.cls[0]}<br><small>&rarr; ${m.cls[1]}</small></td></tr>`;
+      });
+      $("ctab").innerHTML = `<tr><th>Problem (hover for logic)</th><th>Slow method: operations / time</th><th>Fast method: operations / time</th><th>Speed-up</th><th>Growth in s (slow &rarr; fast)</th></tr>` + rows;
+      const ratios = CMP.map((m, k) => {const a = D[k].s[j], b = D[k].f[j]; return a != null && b != null ? a / b : null});
+      const mx = Math.max(...ratios.filter(x => x != null).map(x => Math.log10(Math.max(x, 1))), 1);
+      CMP.forEach((m, k) => {
+        const x = ratios[k]; const w = x == null ? 0 : Math.max(1.5, 100 * Math.log10(Math.max(x, 1)) / mx);
+        bars += `<div class="r"><span>${m.name}</span><div class="tr"><i style="width:${w}%"></i></div><b>${x == null ? "—" : fmtX(x)}</b></div>`
+      });
+      $("cbars").innerHTML = bars + `<small>Bar length is on a log scale.</small>`;
+      const mk = (side) => ({
+        xs: CS, xname: "s", xlabel: "s", mark: s, tipFmt: fx, ylabel: "operations",
+        series: CMP.map((m, k) => ({name: m.name, color: PAL[k], ys: D[k][side]}))
+      });
+      chart($("cc1"), mk("s")); chart($("cc2"), mk("f"));
+      $("verdict").innerHTML = `<b>Reading the comparison at s = ${s}.</b> The largest saving is for <b>${best ? best.name : "n/a"}</b> (${best ? fmtX(best.sp) : ""} fewer operations).
+   <ul><li><b>Exponential vs. Polynomial / Logarithmic:</b> Binary Search (&Theta;(s)) and Greedy Talk Scheduling (&Theta;(s log s)) eliminate the exponential &Theta;(2<sup>s</sup>) bottleneck of Linear Search over 2<sup>s</sup> items and Brute-Force Subset Enumeration.</li>
+   <li><b>Quadratic vs. Linearithmic:</b> Merge Sort (&Theta;(n log n)) avoids the &Theta;(n<sup>2</sup>) degradation of Bubble and Insertion Sorts.</li>
+   <li><b>Constant-Factor Optimization:</b> Horner's rule stays in &Theta;(n) alongside conventional polynomial evaluation, yet reduces arithmetic operations from 3n to 2n.</li></ul>`;
+    }
+
+    function witness() {
+      const gs = {n2: n => n * n, n: n => n, nlog: n => n * Math.log2(n), n3: n => n ** 3};
+      const g = gs[$("g").value], C = Number($("C").value), K = Number($("K").value);
+      const f = n => 4 * n * n + 6 * n * Math.log2(n) + 10; let bad = null;
+      for (let n = Math.max(1, Math.floor(K) + 1); n <= 100000; n++) {if (f(n) > C * g(n) + 1e-9) {bad = n; break} }
+      $("wit").innerHTML = bad === null ? '<span class="ok">&#10003; f(n) &le; C&middot;g(n) for every tested n &gt; k</span>'
+        : `<span class="bad">&#10007; fails first at n = ${bad}: f = ${f(bad).toFixed(1)}, C&middot;g = ${(C * g(bad)).toFixed(1)}</span>`;
+    }
+    ["g", "C", "K"].forEach(id => $(id).addEventListener("input", witness));
+    $("rs").addEventListener("input", updateCmp);
+
+    const tip = document.createElement("div"); tip.id = "tip"; document.body.appendChild(tip);
+    function tipFor(t) {
+      if (t.dataset.w === "t") {
+        const g = $("g").value, gs = {n2: "n**2", n: "n", nlog: "n*math.log2(n)", n3: "n**3"}[g];
+        return t.dataset.tip + `<h4 style="margin-top:8px">Python that runs this check</h4><pre class="py">f = lambda n: 4*n**2 + 6*n*math.log2(n) + 10\ng = lambda n: ${esc(gs)}\nall(f(n) <= ${$("C").value}*g(n) for n in range(${Number($("K").value) + 1}, 100001))</pre>`
+      }
+      const i = +t.dataset.i, v = Number($("r" + i).value), w = t.dataset.w;
+      const body = cases[i].logic(v)[w];
+      const code = w === "o" ? DRV[i](v) : SRC[i][w];
+      return body + `<h4 style="margin-top:8px">${w === "o" ? "Python call with your current slider value" : "Python that runs this (rosen_ch3_algos.py)"}</h4><pre class="py">${esc(code)}</pre>` + (w === "o" ? "" : `<div class="note">${NOTE}</div>`);
+    }
+    function place(x, y) {tip.style.display = "block"; if (x + tip.offsetWidth > innerWidth - 8) x = Math.max(8, x - tip.offsetWidth - 28); if (y + tip.offsetHeight > innerHeight - 8) y = Math.max(8, y - tip.offsetHeight - 28); tip.style.left = x + "px"; tip.style.top = y + "px"}
+    function chartTip(sv, e) {
+      const r = sv.getBoundingClientRect(), cfg = sv._cfg, G = sv._geo, vx = (e.clientX - r.left) / r.width * G.W;
+      const x = G.x0 + (vx - G.L) / (G.W - G.L - G.R) * (G.x1 - G.x0); let j = 0, best = 1e99;
+      cfg.xs.forEach((v, i) => {const dd = Math.abs(v - x); if (dd < best) {best = dd; j = i} });
+      tip.innerHTML = `<h4>${cfg.xname} = ${cfg.xs[j]}</h4>` + cfg.series.map(s => {
+        const y = s.ys[j];
+        return `<div><span style="color:${s.color}">&#9679;</span> ${s.name}: <b>${y > 0 && isFinite(y) ? cfg.tipFmt(y) : "—"}</b></div>`
+      }).join("");
+      place(e.clientX + 14, e.clientY + 14);
+    }
+    document.addEventListener("mousemove", e => {
+      const sv = e.target.closest && e.target.closest("svg.ch");
+      if (sv && sv._cfg) {chartTip(sv, e); return }
+      const t = e.target.closest && e.target.closest("[data-w]");
+      if (!t) {tip.style.display = "none"; return }
+      tip.innerHTML = tipFor(t); place(e.clientX + 14, e.clientY + 14);
+    });
+    document.addEventListener("focusin", e => {const t = e.target.closest("[data-w]"); if (!t) return; tip.innerHTML = tipFor(t); const r = t.getBoundingClientRect(); place(r.left, r.bottom + 8)});
+    document.addEventListener("focusout", () => tip.style.display = "none");
+
+    function updateAll() {cases.forEach((_, i) => update(i)); updateCmp(); witness()}
+    $("rate").addEventListener("change", updateAll);
+    updateAll();
+  </script>
+</body>
+
+</html>
